@@ -1,0 +1,48 @@
+version: '3'
+services:
+  httpd:
+    image: php:5.3-apache
+    container_name: 'httpd'
+    tty: true
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - app:/var/www/:cached
+
+  composer:
+    image: composer:1.8
+    container_name: 'composer'
+    working_dir: /var/www/www.example.com/
+    volumes:
+      - app:/var/www/:cached
+      - vendor:/var/www/vendor/
+    depends_on:
+      - httpd
+
+  mysql:
+    image: mariadb:10.2.15
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_USER: app
+      MYSQL_PASSWORD: development
+      MYSQL_DATABASE: example
+    ports:
+      - '3306:3306'
+    volumes:
+      - mariadb-data:/var/lib/mysql
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
+
+volumes:
+  app:
+    driver_opts:
+      type: none
+      device: ${PWD}/src/
+      o: bind
+  vendor:
+  mariadb-data:
+    driver: local
