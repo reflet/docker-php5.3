@@ -8,14 +8,14 @@ services:
       - '80:80'
       - '443:443'
     volumes:
-      - app:/var/www/:cached
+      - ./src/:/var/www/:cached
 
   composer:
     image: composer:1.8
     container_name: 'composer'
-    working_dir: /var/www/www.example.com/
+    working_dir: /var/www/
     volumes:
-      - app:/var/www/:cached
+      - ./src/:/var/www/:cached
       - vendor:/var/www/vendor/
     depends_on:
       - httpd
@@ -38,11 +38,6 @@ services:
       - "8025:8025"
 
 volumes:
-  app:
-    driver_opts:
-      type: none
-      device: ${PWD}/src/
-      o: bind
   vendor:
   mariadb-data:
     driver: local
